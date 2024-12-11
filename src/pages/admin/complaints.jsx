@@ -1,15 +1,15 @@
-import React, { useState, useEffect } from 'react';
-import Sidebar from '../../components/admin/sidebar';
-import { Search, ArrowUpDown } from 'lucide-react';
+import React, { useState, useEffect } from "react";
+import Sidebar from "../../components/admin/sidebar";
+import { Search, ArrowUpDown } from "lucide-react";
 import { Helmet } from "react-helmet";
 
 const Complaints = () => {
   const [complaints, setComplaints] = useState([]);
-  const [searchQuery, setSearchQuery] = useState('');
+  const [searchQuery, setSearchQuery] = useState("");
   const [isSearchExpanded, setIsSearchExpanded] = useState(false);
   const [sortConfig, setSortConfig] = useState({
     key: null,
-    direction: 'ascending'
+    direction: "ascending",
   });
 
   useEffect(() => {
@@ -18,54 +18,59 @@ const Complaints = () => {
 
   const fetchComplaints = async () => {
     try {
-      const response = await fetch('https://ecommercebackend-8gx8.onrender.com/get-complaints');
+      const response = await fetch(
+        "https://ecommercebackend-8gx8.onrender.com/get-complaints"
+      );
       const data = await response.json();
       setComplaints(data.complaints);
     } catch (error) {
-      console.error('Error fetching complaints:', error);
+      console.error("Error fetching complaints:", error);
     }
   };
 
   const handleStatusChange = async (complaintId, newStatus) => {
     try {
-      const response = await fetch('https://ecommercebackend-8gx8.onrender.com/update-complaint-status', {
-        method: 'PUT',
-        headers: {
-          'Content-Type': 'application/json'
-        },
-        body: JSON.stringify({
-          complaintId,
-          status: newStatus
-        })
-      });
+      const response = await fetch(
+        "https://ecommercebackend-8gx8.onrender.com/update-complaint-status",
+        {
+          method: "PUT",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            complaintId,
+            status: newStatus,
+          }),
+        }
+      );
 
       if (response.ok) {
         fetchComplaints();
       }
     } catch (error) {
-      console.error('Error updating complaint status:', error);
+      console.error("Error updating complaint status:", error);
     }
   };
 
   const handleSort = (key) => {
-    let direction = 'ascending';
-    if (sortConfig.key === key && sortConfig.direction === 'ascending') {
-      direction = 'descending';
+    let direction = "ascending";
+    if (sortConfig.key === key && sortConfig.direction === "ascending") {
+      direction = "descending";
     }
     setSortConfig({ key, direction });
   };
 
   const sortedComplaints = React.useMemo(() => {
     if (!Array.isArray(complaints)) return [];
-    
+
     let sortableComplaints = [...complaints];
     if (sortConfig.key !== null) {
       sortableComplaints.sort((a, b) => {
         if (a[sortConfig.key] < b[sortConfig.key]) {
-          return sortConfig.direction === 'ascending' ? -1 : 1;
+          return sortConfig.direction === "ascending" ? -1 : 1;
         }
         if (a[sortConfig.key] > b[sortConfig.key]) {
-          return sortConfig.direction === 'ascending' ? 1 : -1;
+          return sortConfig.direction === "ascending" ? 1 : -1;
         }
         return 0;
       });
@@ -73,21 +78,21 @@ const Complaints = () => {
     return sortableComplaints;
   }, [complaints, sortConfig]);
 
-  const filteredComplaints = sortedComplaints.filter(complaint => 
+  const filteredComplaints = sortedComplaints.filter((complaint) =>
     complaint.complaintNumber?.toLowerCase().includes(searchQuery.toLowerCase())
   );
 
   return (
     <div className="flex">
-    <Helmet>
-      <title>Complaints | Admin | Mera Bestie</title>
-    </Helmet>
+      <Helmet>
+        <title>Complaints | Admin | Mera Bestie</title>
+      </Helmet>
       <Sidebar />
       <div className="flex-1 p-8 ml-[5rem] lg:ml-64 bg-pink-50 min-h-screen">
         <div className="fixed top-4 left-1/2 transform -translate-x-1/2 z-10 w-full max-w-2xl px-4">
           <div className="relative">
             <div className="flex items-center w-full">
-              <button 
+              <button
                 className="md:hidden absolute left-2 z-10"
                 onClick={() => setIsSearchExpanded(!isSearchExpanded)}
               >
@@ -108,44 +113,66 @@ const Complaints = () => {
           <table className="min-w-full table-auto">
             <thead className="bg-pink-100">
               <tr>
-                <th onClick={() => handleSort('complaintNumber')} className="px-6 py-3 text-left text-xs font-medium text-gray-700 uppercase tracking-wider cursor-pointer">
+                <th
+                  onClick={() => handleSort("complaintNumber")}
+                  className="px-6 py-3 text-left text-xs font-medium text-gray-700 uppercase tracking-wider cursor-pointer"
+                >
                   <div className="flex items-center">
                     Complaint ID
                     <ArrowUpDown size={14} className="ml-1" />
                   </div>
                 </th>
-                <th onClick={() => handleSort('name')} className="px-6 py-3 text-left text-xs font-medium text-gray-700 uppercase tracking-wider cursor-pointer">
+                <th
+                  onClick={() => handleSort("name")}
+                  className="px-6 py-3 text-left text-xs font-medium text-gray-700 uppercase tracking-wider cursor-pointer"
+                >
                   <div className="flex items-center">
                     Name
                     <ArrowUpDown size={14} className="ml-1" />
                   </div>
                 </th>
-                <th onClick={() => handleSort('email')} className="px-6 py-3 text-left text-xs font-medium text-gray-700 uppercase tracking-wider cursor-pointer">
+                <th
+                  onClick={() => handleSort("email")}
+                  className="px-6 py-3 text-left text-xs font-medium text-gray-700 uppercase tracking-wider cursor-pointer"
+                >
                   <div className="flex items-center">
                     Email
                     <ArrowUpDown size={14} className="ml-1" />
                   </div>
                 </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-700 uppercase tracking-wider">Message</th>
-                <th onClick={() => handleSort('userType')} className="px-6 py-3 text-left text-xs font-medium text-gray-700 uppercase tracking-wider cursor-pointer">
+                <th className="px-6 py-3 text-left text-xs font-medium text-gray-700 uppercase tracking-wider">
+                  Message
+                </th>
+                <th
+                  onClick={() => handleSort("userType")}
+                  className="px-6 py-3 text-left text-xs font-medium text-gray-700 uppercase tracking-wider cursor-pointer"
+                >
                   <div className="flex items-center">
                     User Type
                     <ArrowUpDown size={14} className="ml-1" />
                   </div>
                 </th>
-                <th onClick={() => handleSort('status')} className="px-6 py-3 text-left text-xs font-medium text-gray-700 uppercase tracking-wider cursor-pointer">
+                <th
+                  onClick={() => handleSort("status")}
+                  className="px-6 py-3 text-left text-xs font-medium text-gray-700 uppercase tracking-wider cursor-pointer"
+                >
                   <div className="flex items-center">
                     Status
                     <ArrowUpDown size={14} className="ml-1" />
                   </div>
                 </th>
-                <th onClick={() => handleSort('createdAt')} className="px-6 py-3 text-left text-xs font-medium text-gray-700 uppercase tracking-wider cursor-pointer">
+                <th
+                  onClick={() => handleSort("createdAt")}
+                  className="px-6 py-3 text-left text-xs font-medium text-gray-700 uppercase tracking-wider cursor-pointer"
+                >
                   <div className="flex items-center">
                     Created At
                     <ArrowUpDown size={14} className="ml-1" />
                   </div>
                 </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-700 uppercase tracking-wider">Actions</th>
+                <th className="px-6 py-3 text-left text-xs font-medium text-gray-700 uppercase tracking-wider">
+                  Actions
+                </th>
               </tr>
             </thead>
             <tbody className="bg-white divide-y divide-gray-200">
@@ -167,9 +194,15 @@ const Complaints = () => {
                     {complaint.userType}
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap text-sm">
-                    <span className={`px-2 inline-flex text-xs leading-5 font-semibold rounded-full 
-                      ${complaint.status === 'Resolved' ? 'bg-green-100 text-green-800' : 'bg-yellow-100 text-yellow-800'}`}>
-                      {complaint.status || 'Pending'}
+                    <span
+                      className={`px-2 inline-flex text-xs leading-5 font-semibold rounded-full 
+                      ${
+                        complaint.status === "Resolved"
+                          ? "bg-green-100 text-green-800"
+                          : "bg-yellow-100 text-yellow-800"
+                      }`}
+                    >
+                      {complaint.status || "Pending"}
                     </span>
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
@@ -177,8 +210,13 @@ const Complaints = () => {
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
                     <select
-                      value={complaint.status || 'Pending'}
-                      onChange={(e) => handleStatusChange(complaint.complaintNumber, e.target.value)}
+                      value={complaint.status || "Pending"}
+                      onChange={(e) =>
+                        handleStatusChange(
+                          complaint.complaintNumber,
+                          e.target.value
+                        )
+                      }
                       className="border rounded px-2 py-1 text-sm"
                     >
                       <option value="Pending">Pending</option>

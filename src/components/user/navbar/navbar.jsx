@@ -1,6 +1,19 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import { Link, useLocation } from "react-router-dom";
-import { FaSearch, FaChevronDown, FaTimes, FaBars, FaUser, FaHeart, FaShoppingCart, FaGift, FaPhone, FaHome, FaStore, FaEnvelope } from "react-icons/fa";
+import {
+  FaSearch,
+  FaChevronDown,
+  FaTimes,
+  FaBars,
+  FaUser,
+  FaHeart,
+  FaShoppingCart,
+  FaGift,
+  FaPhone,
+  FaHome,
+  FaStore,
+  FaEnvelope,
+} from "react-icons/fa";
 
 export default function Navbar() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -9,25 +22,31 @@ export default function Navbar() {
   const [userName, setUserName] = useState("");
   const location = useLocation();
 
-  const toggleMenu = () => setIsMenuOpen(!isMenuOpen);
-  const toggleProfileMenu = () => setIsProfileMenuOpen(!isProfileMenuOpen);
-  const toggleSearch = () => setIsSearchOpen(!isSearchOpen);
+  // Navigation Links Config
+  const navLinks = [
+    { path: "/HomePage", label: "HOME", icon: <FaHome /> },
+    { path: "/shop", label: "SHOP", icon: <FaStore /> },
+    { path: "/contact", label: "CONTACT", icon: <FaEnvelope /> },
+    { path: "/OccasionsPage", label: "OCCASIONS" },
+    { path: "/about", label: "ABOUT" },
+  ];
+
+  // Toggle Functions
+  const toggleMenu = () => setIsMenuOpen((prev) => !prev);
+  const toggleProfileMenu = () => setIsProfileMenuOpen((prev) => !prev);
+  const toggleSearch = () => setIsSearchOpen((prev) => !prev);
 
   const isActive = (path) => location.pathname === path;
 
+  // Fetch User Data
   useEffect(() => {
-    const handleResize = () => {
-      if (window.innerWidth >= 1024) {
-        setIsMenuOpen(false);
-        setIsSearchOpen(false);
-      }
-    };
-
     const fetchUserName = async () => {
       const userId = sessionStorage.getItem("userId");
       if (userId) {
         try {
-          const response = await fetch(`https://ecommercebackend-8gx8.onrender.com/auth/user/${userId}`);
+          const response = await fetch(
+            `https://ecommercebackend-8gx8.onrender.com/auth/user/${userId}`
+          );
           const data = await response.json();
           setUserName(data.name);
         } catch (error) {
@@ -37,14 +56,26 @@ export default function Navbar() {
     };
 
     fetchUserName();
-    window.addEventListener('resize', handleResize);
-    return () => window.removeEventListener('resize', handleResize);
   }, []);
 
-  const handleLogout = () => {
+  // Handle Resize
+  useEffect(() => {
+    const handleResize = () => {
+      if (window.innerWidth >= 1024) {
+        setIsMenuOpen(false);
+        setIsSearchOpen(false);
+      }
+    };
+
+    window.addEventListener("resize", handleResize);
+    return () => window.removeEventListener("resize", handleResize);
+  }, []);
+
+  // Handle Logout
+  const handleLogout = useCallback(() => {
     sessionStorage.removeItem("userId");
     window.location.reload();
-  };
+  }, []);
 
   const userId = sessionStorage.getItem("userId");
 
@@ -54,7 +85,8 @@ export default function Navbar() {
       <div className="bg-white text-pink-500 py-2 text-center text-sm border-b">
         <span className="inline-flex items-center">
           <FaGift className="mr-2" />
-          USE CODE OFF10 TO GET FLAT 10% OFF ON ORDERS ABOVE RS.499 | FREE SHIPPING | COD AVAILABLE
+          USE CODE OFF10 TO GET FLAT 10% OFF ON ORDERS ABOVE RS.499 | FREE
+          SHIPPING | COD AVAILABLE
         </span>
       </div>
 
@@ -63,16 +95,15 @@ export default function Navbar() {
         <div className="max-w-[1200px] mx-auto px-4 lg:px-0">
           <div className="h-[60px] flex items-center justify-between">
             {/* Mobile Menu Button */}
-            <button
-              onClick={toggleMenu}
-              className="lg:hidden text-black"
-            >
+            <button onClick={toggleMenu} className="lg:hidden text-black">
               <FaBars className="w-6 h-6" />
             </button>
 
             {/* Logo */}
             <Link to="/HomePage" className="text-2xl flex items-center">
-              <span className="font-['Bodoni_MT'] font-bold text-xl">MERA Bestie</span>
+              <span className="font-['Bodoni_MT'] font-bold text-xl">
+                MERA Bestie
+              </span>
             </Link>
 
             {/* Search Bar */}
@@ -89,18 +120,24 @@ export default function Navbar() {
 
             {/* Action Buttons */}
             <div className="flex items-center space-x-6">
-              <button 
-                aria-label="Search" 
+              <button
+                aria-label="Search"
                 className="md:hidden hover:text-gray-500"
                 onClick={toggleSearch}
               >
                 <FaSearch className="w-4 h-4" />
               </button>
-              <Link to="/cart" className="hover:text-gray-500 flex items-center"> 
+              <Link
+                to="/cart"
+                className="hover:text-gray-500 flex items-center"
+              >
                 <FaShoppingCart className="w-4 h-4" />
                 <span className="ml-2 hidden md:inline">Cart</span>
               </Link>
-              <button aria-label="Wishlist" className="hover:text-gray-500 hidden md:block">
+              <button
+                aria-label="Wishlist"
+                className="hover:text-gray-500 hidden md:block"
+              >
                 <FaHeart className="w-4 h-4" />
               </button>
               <div className="relative">
@@ -111,7 +148,7 @@ export default function Navbar() {
                 >
                   <FaUser className="w-4 h-4" />
                   <span className="ml-2 hidden md:inline">
-                    {userId ? `Hi, ${userName}` : 'Hi, Profile'}
+                    {userId ? `Hi, ${userName}` : "Hi, Profile"}
                   </span>
                 </button>
                 {isProfileMenuOpen && (
@@ -153,22 +190,16 @@ export default function Navbar() {
           <div className="h-12 flex items-center justify-between">
             {/* Menu Items */}
             <div className="flex items-center space-x-8 text-sm font-normal">
-              <Link to="/HomePage" className={`hover:text-gray-200 ${isActive('/HomePage') ? 'text-gray-900' : ''}`}>
-                HOME
-              </Link>
-              <Link to="/shop" className={`hover:text-gray-200 ${isActive('/shop') ? 'text-gray-900' : ''}`}>
-                SHOP
-              </Link>
-              <Link to="/contact" className={`hover:text-gray-200 ${isActive('/contact') ? 'text-gray-900' : ''}`}>
-                CONTACT
-              </Link>
-              <Link to="/OccasionsPage" className={`hover:text-gray-200 ${isActive('/OccasionsPage') ? 'text-gray-900' : ''}`}>
-            OCCASIONS
-          </Link>
-          <Link to="/about" className={`hover:text-gray-200 ${isActive('/about') ? 'text-gray-900' : ''}`}>
-            ABOUT
-          </Link>
-          
+              {navLinks.map(({ path, label }) => (
+                <Link
+                  key={path}
+                  to={path}
+                  className={`hover:text-gray-200 ${isActive(path) ? "text-gray-900" : ""
+                    }`}
+                >
+                  {label}
+                </Link>
+              ))}
             </div>
 
             {/* Phone Number */}
@@ -197,29 +228,28 @@ export default function Navbar() {
       {/* Mobile Navigation Sidebar */}
       {isMenuOpen && (
         <div className="fixed inset-0 z-50 lg:hidden">
-          <div className="fixed inset-0 bg-black bg-opacity-50" onClick={toggleMenu}></div>
+          <div
+            className="fixed inset-0 bg-black bg-opacity-50"
+            onClick={toggleMenu}
+          ></div>
           <div className="fixed inset-y-0 left-0 max-w-xs w-full bg-white shadow-xl z-50 overflow-y-auto">
             <div className="p-6">
               <button onClick={toggleMenu} className="absolute top-5 right-5">
                 <FaTimes className="w-6 h-6" />
               </button>
               <div className="mt-8">
-                <Link to="/HomePage" className="block py-2.5 text-lg font-medium hover:text-pink-500" onClick={toggleMenu}>
-                  <FaHome className="inline-block mr-2" /> Home
-                </Link>
-                <Link to="/shop" className="block py-2.5 text-lg font-medium hover:text-pink-500" onClick={toggleMenu}>
-                  <FaStore className="inline-block mr-2" /> Shop
-                </Link>
-                <Link to="/contact" className="block py-2.5 text-lg font-medium hover:text-pink-500" onClick={toggleMenu}>
-                  <FaEnvelope className="inline-block mr-2" /> Contact
-                </Link>
+                {navLinks.map(({ path, label, icon }) => (
+                  <Link
+                    key={path}
+                    to={path}
+                    className="block py-2.5 text-lg font-medium hover:text-pink-500"
+                    onClick={toggleMenu}
+                  >
+                    {icon && <span className="mr-2">{icon}</span>}
+                    {label}
+                  </Link>
+                ))}
                 <hr className="my-4" />
-                <Link to="/OccasionsPage" className="block py-2.5 text-lg font-medium hover:text-pink-500" onClick={toggleMenu}>
-                  Occasions
-                </Link>
-                <Link to="/about" className="block py-2.5 text-lg font-medium hover:text-pink-500" onClick={toggleMenu}>
-                  About
-                </Link>
                 <div className="mt-4 flex items-center">
                   <FaPhone className="w-4 h-4 mr-2" />
                   <span>(219) 555-0114</span>
