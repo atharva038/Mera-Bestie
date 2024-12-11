@@ -2,59 +2,64 @@ import React from 'react';
 import { PieChart, Pie, Cell, ResponsiveContainer } from 'recharts';
 
 const Dashboard = () => {
-    // Sample data for pie charts
+    // Sample data for visualization
     const orderData = [
         { name: 'Completed', value: 75 },
-        { name: 'Pending', value: 25 }
+        { name: 'Pending', value: 25 },
     ];
-    
     const revenueData = [
         { name: 'Profit', value: 65 },
-        { name: 'Cost', value: 35 }
+        { name: 'Cost', value: 35 },
     ];
-    
     const growthData = [
         { name: 'Growth', value: 82 },
-        { name: 'Target', value: 18 }
+        { name: 'Target', value: 18 },
     ];
 
     const COLORS = ['#FF8042', '#FFBB28'];
 
     return (
         <div className="p-6 bg-pink-100 transition-all duration-300 ml-[5rem] lg:ml-64">
-            <h1 className="text-2xl font-bold mb-4">Dashboard</h1>
-            <p className="mb-6">Welcome back to Mera Bestie Admin!</p>
-
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
-                <div className="bg-white p-4 rounded-lg shadow-md hover:shadow-lg transition-shadow">
-                    <h2 className="text-gray-600 text-lg mb-2">Total Orders</h2>
-                    <p className="text-3xl font-bold text-pink-600">432</p>
-                    <p className="text-sm text-gray-500 mt-2">↑ 12% from last month</p>
-                </div>
-                <div className="bg-white p-4 rounded-lg shadow-md hover:shadow-lg transition-shadow">
-                    <h2 className="text-gray-600 text-lg mb-2">Orders Delivered</h2>
-                    <p className="text-3xl font-bold text-pink-600">357</p>
-                    <p className="text-sm text-gray-500 mt-2">↑ 8% from last month</p>
-                </div>
-                <div className="bg-white p-4 rounded-lg shadow-md hover:shadow-lg transition-shadow">
-                    <h2 className="text-gray-600 text-lg mb-2">Revenue Generated</h2>
-                    <p className="text-3xl font-bold text-pink-600">₹128,000</p>
-                    <p className="text-sm text-gray-500 mt-2">↑ 15% from last month</p>
-                </div>
-                <div className="bg-white p-4 rounded-lg shadow-md hover:shadow-lg transition-shadow">
-                    <h2 className="text-gray-600 text-lg mb-2">Total Products</h2>
-                    <p className="text-3xl font-bold text-pink-600">89</p>
-                    <p className="text-sm text-gray-500 mt-2">↑ 5% from last month</p>
-                </div>
+            {/* Header Section */}
+            <div className="mb-6">
+                <h1 className="text-3xl font-bold text-gray-800">Dashboard</h1>
+                <p className="text-gray-600 mt-1 text-sm">Welcome to Mera Bestie Admin Panel!</p>
             </div>
 
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-                <div className="bg-white p-6 rounded-lg shadow-md">
-                    <h2 className="text-lg font-semibold mb-4">Order Status</h2>
+            {/* Statistics Section */}
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
+                {[
+                    { title: 'Total Orders', value: '432', percent: '+12%' },
+                    { title: 'Orders Delivered', value: '357', percent: '+8%' },
+                    { title: 'Revenue Generated', value: '₹128,000', percent: '+15%' },
+                    { title: 'Total Products', value: '89', percent: '+5%' },
+                ].map((item, index) => (
+                    <div
+                        key={index}
+                        className="bg-white p-4 rounded-lg shadow-md hover:shadow-lg transition-shadow ease-in-out"
+                    >
+                        <h2 className="text-sm font-semibold text-gray-600 mb-2">{item.title}</h2>
+                        <p className="text-2xl font-bold text-pink-600">{item.value}</p>
+                        <p className="text-sm text-gray-500 mt-2">{item.percent}</p>
+                    </div>
+                ))}
+            </div>
+
+            {/* Chart Visualization Section */}
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                {/* Orders Status */}
+                <div className="bg-white p-4 rounded-lg shadow-md">
+                    <h2 className="text-lg font-semibold mb-2 text-gray-700">Order Status</h2>
                     <div className="h-64">
                         <ResponsiveContainer width="100%" height="100%">
                             <PieChart>
-                                <Pie data={orderData} innerRadius={60} outerRadius={80} paddingAngle={5} dataKey="value">
+                                <Pie
+                                    data={orderData}
+                                    innerRadius={60}
+                                    outerRadius={90}
+                                    paddingAngle={5}
+                                    dataKey="value"
+                                >
                                     {orderData.map((entry, index) => (
                                         <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
                                     ))}
@@ -62,16 +67,25 @@ const Dashboard = () => {
                             </PieChart>
                         </ResponsiveContainer>
                     </div>
-                    <p className="text-center text-2xl font-bold text-pink-600 mt-4">75%</p>
-                    <p className="text-center text-gray-600">Completion Rate</p>
+                    <div className="text-center mt-4">
+                        <p className="text-gray-800 text-lg font-semibold">Completion Rate</p>
+                        <p className="text-pink-600 text-3xl mt-1">75%</p>
+                    </div>
                 </div>
 
-                <div className="bg-white p-6 rounded-lg shadow-md">
-                    <h2 className="text-lg font-semibold mb-4">Revenue Analytics</h2>
+                {/* Revenue Analytics */}
+                <div className="bg-white p-4 rounded-lg shadow-md">
+                    <h2 className="text-lg font-semibold mb-2 text-gray-700">Revenue Analytics</h2>
                     <div className="h-64">
                         <ResponsiveContainer width="100%" height="100%">
                             <PieChart>
-                                <Pie data={revenueData} innerRadius={60} outerRadius={80} paddingAngle={5} dataKey="value">
+                                <Pie
+                                    data={revenueData}
+                                    innerRadius={60}
+                                    outerRadius={90}
+                                    paddingAngle={5}
+                                    dataKey="value"
+                                >
                                     {revenueData.map((entry, index) => (
                                         <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
                                     ))}
@@ -79,16 +93,25 @@ const Dashboard = () => {
                             </PieChart>
                         </ResponsiveContainer>
                     </div>
-                    <p className="text-center text-2xl font-bold text-pink-600 mt-4">65%</p>
-                    <p className="text-center text-gray-600">Profit Margin</p>
+                    <div className="text-center mt-4">
+                        <p className="text-gray-800 text-lg font-semibold">Profit Margin</p>
+                        <p className="text-pink-600 text-3xl mt-1">65%</p>
+                    </div>
                 </div>
 
-                <div className="bg-white p-6 rounded-lg shadow-md">
-                    <h2 className="text-lg font-semibold mb-4">Customer Growth</h2>
+                {/* Customer Growth Analytics */}
+                <div className="bg-white p-4 rounded-lg shadow-md">
+                    <h2 className="text-lg font-semibold mb-2 text-gray-700">Customer Growth</h2>
                     <div className="h-64">
                         <ResponsiveContainer width="100%" height="100%">
                             <PieChart>
-                                <Pie data={growthData} innerRadius={60} outerRadius={80} paddingAngle={5} dataKey="value">
+                                <Pie
+                                    data={growthData}
+                                    innerRadius={60}
+                                    outerRadius={90}
+                                    paddingAngle={5}
+                                    dataKey="value"
+                                >
                                     {growthData.map((entry, index) => (
                                         <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
                                     ))}
@@ -96,8 +119,10 @@ const Dashboard = () => {
                             </PieChart>
                         </ResponsiveContainer>
                     </div>
-                    <p className="text-center text-2xl font-bold text-pink-600 mt-4">82%</p>
-                    <p className="text-center text-gray-600">Growth Rate</p>
+                    <div className="text-center mt-4">
+                        <p className="text-gray-800 text-lg font-semibold">Growth Rate</p>
+                        <p className="text-pink-600 text-3xl mt-1">82%</p>
+                    </div>
                 </div>
             </div>
         </div>
