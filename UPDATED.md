@@ -10,3 +10,6 @@ Made footer more attaractive and more eye catching where footer is added to almo
 
 Added images on every card and added hour effect also, also added dancing effect on every card icon so that will attract customers
 
+### Home page improved 
+
+product section of homepage is improved and also their styling improved
