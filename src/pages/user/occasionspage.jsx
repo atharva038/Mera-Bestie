@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { Search, Cake, Heart, Gift, Sparkles, Music, Utensils, GraduationCap } from 'lucide-react';
 import Navbar from '../../components/user/navbar/navbar';
 import { Helmet } from "react-helmet";
+import Footer from '../../components/user/footer/footer';
 
 const occasions = [
   { id: 1, title: 'Birthdays', Icon: Cake },
@@ -23,9 +24,9 @@ export default function OccasionsPage() {
 
   return (
     <>
-    <Helmet>
-      <title>Occasions | Mera Bestie</title>
-    </Helmet>
+      <Helmet>
+        <title>Occasions | Mera Bestie</title>
+      </Helmet>
       <Navbar />
       <div className="min-h-screen bg-pink-50 py-12 px-4 sm:px-6 lg:px-8 animate-fadeIn">
         <div className="max-w-7xl mx-auto">
@@ -64,17 +65,22 @@ function SearchInput({ value, onChange }) {
         placeholder="Search occasions..."
       />
       <Search className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400" />
+
     </div>
+
   );
 }
 
 function OccasionCard({ title, Icon, className }) {
   return (
-    <div
-      className={`bg-white p-6 rounded-lg shadow-md text-center ${className}`}
-    >
-      <Icon className="w-12 h-12 text-pink-500 mx-auto mb-4 animate-pulse" />
-      <h3 className="text-lg font-semibold text-gray-700 animate-flipIn">{title}</h3>
-    </div>
+    <>
+      <div
+        className={`bg-white p-6 rounded-lg shadow-md text-center ${className}`}
+      >
+        <Icon className="w-12 h-12 text-pink-500 mx-auto mb-4 animate-pulse" />
+        <h3 className="text-lg font-semibold text-gray-700 animate-flipIn">{title}</h3>
+      </div>
+      {/* <Footer /> */}
+    </>
   );
 }

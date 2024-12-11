@@ -3,6 +3,7 @@ import { FaPhone, FaEnvelope, FaMapMarkerAlt } from "react-icons/fa";
 import { motion } from "framer-motion";
 import Navbar from "../../components/user/navbar/navbar";
 import { Helmet } from "react-helmet";
+import Footer from "../../components/user/footer/footer";
 
 const ContactUs = () => {
   const [formData, setFormData] = useState({
@@ -271,6 +272,7 @@ const ContactUs = () => {
         </motion.div>
       </div>
     </div>
+    <Footer />
     </>
   );
 };
