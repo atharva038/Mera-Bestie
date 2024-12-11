@@ -1,20 +1,83 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { PieChart, Pie, Cell, ResponsiveContainer } from 'recharts';
 
 const Dashboard = () => {
-    // Sample data for visualization
-    const orderData = [
-        { name: 'Completed', value: 75 },
-        { name: 'Pending', value: 25 },
-    ];
-    const revenueData = [
-        { name: 'Profit', value: 65 },
-        { name: 'Cost', value: 35 },
-    ];
-    const growthData = [
-        { name: 'Growth', value: 82 },
-        { name: 'Target', value: 18 },
-    ];
+    // // Static data for visualization
+    // const orderData = [
+    //     { name: 'Completed', value: 75 },
+    //     { name: 'Pending', value: 25 },
+    // ];
+    // const revenueData = [
+    //     { name: 'Profit', value: 65 },
+    //     { name: 'Cost', value: 35 },
+    // ];
+    // const growthData = [
+    //     { name: 'Growth', value: 82 },
+    //     { name: 'Target', value: 18 },
+    // ];
+
+    const [totalOrders, setTotalOrders] = useState(0);
+    const [totalProducts, setTotalProducts] = useState(0);
+    const [totalComplaints, setTotalComplaints] = useState(0);
+    const [totalRevenue, setTotalRevenue] = useState(0);
+
+    const [revenueData, setRevenueData] = useState([]); // Dynamically computed revenue data
+
+    useEffect(() => {
+        fetchTotalOrders();
+        fetchTotalProducts();
+        fetchTotalComplaints();
+    }, []);
+
+    const fetchTotalOrders = async () => {
+        try {
+            const response = await fetch('https://ecommercebackend-8gx8.onrender.com/get-orders');
+            const data = await response.json();
+            if (data && Array.isArray(data.orders)) {
+                setTotalOrders(data.orders.length);
+
+                // Dynamically compute revenue
+                const revenue = data.orders.reduce((sum, order) => sum + parseFloat(order.price || 0), 0);
+                setTotalRevenue(revenue);
+
+                // Set pie chart data dynamically
+                setRevenueData([
+                    { name: 'Profit', value: revenue * 0.7 }, // Assuming 70% of revenue is profit
+                    { name: 'Cost', value: revenue * 0.3 }, // Assuming 30% of revenue is cost
+                ]);
+            }
+        } catch (error) {
+            console.error('Error fetching total orders:', error);
+        }
+    };
+    const fetchTotalProducts = async () => {
+        try {
+            const response = await fetch('https://ecommercebackend-8gx8.onrender.com/get-product');
+            const data = await response.json();
+            if (data && Array.isArray(data.products)) {
+                setTotalProducts(data.products.length);
+            }
+        } catch (error) {
+            console.error('Error fetching total products:', error);
+        }
+    };
+    const fetchTotalComplaints = async () => {
+        try {
+            const response = await fetch('https://ecommercebackend-8gx8.onrender.com/get-complaints');
+            const data = await response.json();
+            if (data && Array.isArray(data.complaints)) {
+                setTotalComplaints(data.complaints.length);
+            }
+        } catch (error) {
+            console.error('Error fetching total complaints:', error);
+        }
+    };
+
+    //  Dynamically calculate total revenue from all order prices
+    // const calculateTotalRevenue = (orders) => {
+    //     const revenue = orders.reduce((sum, order) => sum + parseFloat(order.price || 0), 0); // Summing up the prices
+    //     setTotalRevenue(revenue);
+    // };
 
     const COLORS = ['#FF8042', '#FFBB28'];
 
@@ -29,10 +92,12 @@ const Dashboard = () => {
             {/* Statistics Section */}
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
                 {[
-                    { title: 'Total Orders', value: '432', percent: '+12%' },
-                    { title: 'Orders Delivered', value: '357', percent: '+8%' },
-                    { title: 'Revenue Generated', value: '₹128,000', percent: '+15%' },
-                    { title: 'Total Products', value: '89', percent: '+5%' },
+                    { title: 'Total Orders', value: totalOrders, percent: '+12%' },
+                    { title: 'Total Complaints', value: totalComplaints, percent: '+8%' },
+                    {
+                        title: 'Revenue Generated', value: `₹${totalRevenue.toFixed(2)}`, percent: '+15%'
+                    },
+                    { title: 'Total Products', value: totalProducts, percent: '+5%' },
                 ].map((item, index) => (
                     <div
                         key={index}
@@ -54,13 +119,13 @@ const Dashboard = () => {
                         <ResponsiveContainer width="100%" height="100%">
                             <PieChart>
                                 <Pie
-                                    data={orderData}
+                                    data={revenueData}
                                     innerRadius={60}
                                     outerRadius={90}
                                     paddingAngle={5}
                                     dataKey="value"
                                 >
-                                    {orderData.map((entry, index) => (
+                                    {revenueData.map((entry, index) => (
                                         <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
                                     ))}
                                 </Pie>
@@ -87,7 +152,7 @@ const Dashboard = () => {
                                     dataKey="value"
                                 >
                                     {revenueData.map((entry, index) => (
-                                        <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
+                                        <Cell key={`cell - ${index}`} fill={COLORS[index % COLORS.length]} />
                                     ))}
                                 </Pie>
                             </PieChart>
@@ -106,13 +171,13 @@ const Dashboard = () => {
                         <ResponsiveContainer width="100%" height="100%">
                             <PieChart>
                                 <Pie
-                                    data={growthData}
+                                    data={revenueData}
                                     innerRadius={60}
                                     outerRadius={90}
                                     paddingAngle={5}
                                     dataKey="value"
                                 >
-                                    {growthData.map((entry, index) => (
+                                    {revenueData.map((entry, index) => (
                                         <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
                                     ))}
                                 </Pie>

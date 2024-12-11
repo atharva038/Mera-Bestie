@@ -5,6 +5,8 @@ import { Helmet } from "react-helmet";
 
 const Orders = () => {
   const [orders, setOrders] = useState([]);
+  const [totalOrders, setTotalOrders] = useState(0);
+
   const [searchQuery, setSearchQuery] = useState('');
   const [sortConfig, setSortConfig] = useState({
     key: null,
@@ -15,15 +17,21 @@ const Orders = () => {
     fetchOrders();
   }, []);
 
-  const fetchOrders = async () => {
+ const fetchOrders = async () => {
     try {
       const response = await fetch('https://ecommercebackend-8gx8.onrender.com/get-orders');
       const data = await response.json();
       setOrders(data.orders);
+
+      // Update total orders
+      if (Array.isArray(data.orders)) {
+        setTotalOrders(data.orders.length);
+      }
     } catch (error) {
       console.error('Error fetching orders:', error);
     }
   };
+
 
   const handleSort = (key) => {
     let direction = 'ascending';
@@ -34,7 +42,7 @@ const Orders = () => {
   };
   const sortedOrders = React.useMemo(() => {
     if (!Array.isArray(orders)) return [];
-    
+
     let sortableOrders = [...orders];
     if (sortConfig.key !== null) {
       sortableOrders.sort((a, b) => {
@@ -43,7 +51,7 @@ const Orders = () => {
 
         // Handle numeric values (like price)
         if (!isNaN(aValue) && !isNaN(bValue)) {
-          return sortConfig.direction === 'ascending' 
+          return sortConfig.direction === 'ascending'
             ? Number(aValue) - Number(bValue)
             : Number(bValue) - Number(aValue);
         }
@@ -69,16 +77,16 @@ const Orders = () => {
       const searchLower = searchQuery.toLowerCase();
       const orderId = order.orderId?.toString().toLowerCase() || '';
       const customerName = order.name?.toLowerCase() || '';
-      
+
       return orderId.includes(searchLower) || customerName.includes(searchLower);
     });
   }, [sortedOrders, searchQuery]);
 
   return (
     <div className="flex">
-    <Helmet>
-      <title>Orders | Admin | Mera Bestie</title>
-    </Helmet>
+      <Helmet>
+        <title>Orders | Admin | Mera Bestie</title>
+      </Helmet>
       <Sidebar />
       <div className="flex-1 p-8 ml-[5rem] lg:ml-64 bg-pink-50 min-h-screen">
         <div className="mb-6 flex justify-center">

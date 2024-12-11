@@ -1,5 +1,7 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
 import axios from 'axios'; // Import axios directly
+import { allowedAdminEmails } from './AdminEmails';
+
 
 const AuthContext = createContext();
 
@@ -19,16 +21,31 @@ export const AuthProvider = ({ children }) => {
     }
   }, []);
 
+  // const signup = async (name, email, password) => {
+  //   const response = await api.post('/auth/signup', { name, email, password });
+  //   const { userId } = response.data;
+
+  //   // Store userId in sessionStorage
+  //   sessionStorage.setItem('userId', userId);
+
+  //   setUser({ name, email, userId });
+  //   return userId;
+  // };
+
   const signup = async (name, email, password) => {
-    const response = await api.post('/auth/signup', { name, email, password });
-    const { userId } = response.data;
-  
-    // Store userId in sessionStorage
-    sessionStorage.setItem('userId', userId);
-  
-    setUser({ name, email, userId });
-    return userId;
+    try {
+      const response = await api.post('/auth/signup', { name, email, password });
+
+      const { userId } = response.data;
+      sessionStorage.setItem('userId', userId);
+      setUser({ name, email, userId });
+      return userId;
+    } catch (err) {
+      console.error('Signup error:', err.response?.data?.error || err.message);
+      throw err;
+    }
   };
+
 
   const login = async (email, password) => {
     try {
@@ -36,12 +53,28 @@ export const AuthProvider = ({ children }) => {
 
       if (response.data.message === 'Login successful') {
         const { userId } = response.data;
-        
-        // Save userId in sessionStorage
+        console.log("response.data", response.data)
+
+        // // Save userId in sessionStorage
+        // sessionStorage.setItem('userId', userId);
+        // if (allowedAdminEmails().includes(response.data.email)) {
+        //   setUser({ userId, isAdmin: true });
+        // } else {
+        //   setUser({ userId, isAdmin: false });
+        // }
+
         sessionStorage.setItem('userId', userId);
+        console.log("Logged-in Email:", email);
+
+        // Use the email entered by the user (since backend does not return it)
+        const isAdmin = allowedAdminEmails().includes();
+        console.log(isAdmin)
+        console.log(isAdmin)
+        // Update the user state with email and admin status
+        setUser({ userId, email, isAdmin });
 
         // Update the state with the logged-in user
-        setUser({ email, userId });
+
 
         return 'Login successful';
       } else {
@@ -58,10 +91,22 @@ export const AuthProvider = ({ children }) => {
     }
   };
 
+  // const logout = async () => {
+  //   await api.post('/auth/logout');
+  //   setUser(null);
+  // };
+
   const logout = async () => {
-    await api.post('/auth/logout');
-    setUser(null);
+    try {
+      await api.post('/auth/logout');
+      setUser(null);
+      sessionStorage.removeItem('userId');
+    } catch (err) {
+      console.error('Logout error:', err.response?.data?.error || err.message);
+      throw err;
+    }
   };
+
 
   const fetchUserName = async (userId) => {
     const response = await api.get(`/auth/user/${userId}`);
